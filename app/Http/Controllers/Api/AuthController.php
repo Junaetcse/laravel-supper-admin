@@ -12,25 +12,26 @@ class AuthController extends Controller
         $this->middleware('auth:api', ['except' => ['login']]);
     }
 
-
     public function login()
     {
         $credentials = request(['email', 'password']);
 
-        if (! $token = auth('api')->attempt($credentials)) {
+        if (!$token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+        $response['companies'] = [];
+        $response['session'] = ['access_token' => $token, 'session_last_access' => 0, 'session_start' => 0];
+        $response['user_info'] = auth('api')->user();
+        $response['roles'] = [];
 
-        return $this->respondWithToken($token);
+        return response()->json($response);
     }
-
 
     public function me()
     {
-        
+
         return response()->json(auth('api')->user());
     }
-
 
     public function logout()
     {
@@ -49,7 +50,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * 60
+            'expires_in' => auth('api')->factory()->getTTL() * 60,
         ]);
     }
 
