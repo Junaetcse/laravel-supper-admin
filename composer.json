@@ -15,7 +15,8 @@
         "laravel/framework": "^7.29",
         "laravel/telescope": "^3.5",
         "laravel/tinker": "^2.5",
-        "rap2hpoutre/laravel-log-viewer": "^1.7"
+        "rap2hpoutre/laravel-log-viewer": "^1.7",
+        "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {
         "facade/ignition": "^2.0",
