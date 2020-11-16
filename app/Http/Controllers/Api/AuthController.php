@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\User;
 
 class AuthController extends Controller
 {
@@ -54,4 +55,10 @@ class AuthController extends Controller
         ]);
     }
 
+    public function registration(Request $request)
+    {
+        $user = User::create($request->all());
+        $user['access_token'] = auth()->tokenById($user->id); 
+        return \response()->json($user);
+    }
 }

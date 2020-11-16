@@ -5,6 +5,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -38,6 +39,14 @@ class User extends Authenticatable implements JWTSubject
         'details' => 'array'
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            $user->setAttribute('password', Hash::make(\Request::get('password', $user->getAttribute('password'))));
+        });
+    }
     public function getJWTIdentifier()
     {
         return $this->getKey();
