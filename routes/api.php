@@ -20,6 +20,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::prefix('auth')->group(function () {
     Route::post('registration', 'Api\AuthController@registration');
+    
 });
 
 Route::group([

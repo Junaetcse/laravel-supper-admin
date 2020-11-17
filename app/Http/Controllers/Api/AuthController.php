@@ -5,13 +5,15 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
+use Log;
+
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        // $this->middleware('auth:api', ['except' => ['login']]);
     }
 
     public function login()
@@ -69,7 +71,27 @@ class AuthController extends Controller
         }
 
         $user = User::create($request->all());
+        if($user){
+            $url = url('/api/auth/email-verification-url/'.$user->email.'/'.$user->id);
+            Log::info($url);
+        }
         $user['access_token'] = auth()->tokenById($user->id); 
         return \response()->json($user);
+    }
+
+    public function emailVerified($email,$id)
+    {
+        // dd($email,$id);
+        $user = User::where('email',$email)->whereNull('email_verified_at')->first();
+        if($user){
+            $user->email_verified_at = now();
+            $user->save();
+            return \response()->json([
+                'message' => 'ACTIVATION COMPLETED'
+            ]);
+        }
+        return \response()->json([
+            'message' => 'ALREADY ACTIVED'
+        ],400);
     }
 }
