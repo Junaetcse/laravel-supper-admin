@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -57,6 +58,16 @@ class AuthController extends Controller
 
     public function registration(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|unique:users',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'EMAIL_EXIST',
+            ],406);
+        }
+
         $user = User::create($request->all());
         $user['access_token'] = auth()->tokenById($user->id); 
         return \response()->json($user);
